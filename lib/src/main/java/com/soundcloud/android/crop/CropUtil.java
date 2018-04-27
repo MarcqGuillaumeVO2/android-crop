@@ -88,10 +88,13 @@ class CropUtil {
     }
 
     @Nullable
-    public static File getFromMediaUri(Context context, ContentResolver resolver, Uri uri) {
+    public static File getFromMediaUri(Context context, ContentResolver resolver, Uri uri, boolean isLocalFile) {
         if (uri == null) return null;
 
-        if (SCHEME_FILE.equals(uri.getScheme())) {
+        if(isLocalFile){
+            return new File(uri.getPath());
+        }
+        else if (SCHEME_FILE.equals(uri.getScheme())) {
             return new File(uri.getPath());
         } else if (SCHEME_CONTENT.equals(uri.getScheme())) {
             final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };

@@ -54,6 +54,8 @@ public class CropImageActivity extends MonitoredActivity {
     private int maxY;
     private int exifRotation;
 
+    private boolean isLocalFile;
+
     private Uri sourceUri;
     private Uri saveUri;
 
@@ -114,11 +116,12 @@ public class CropImageActivity extends MonitoredActivity {
             maxX = extras.getInt(Crop.Extra.MAX_X);
             maxY = extras.getInt(Crop.Extra.MAX_Y);
             saveUri = extras.getParcelable(MediaStore.EXTRA_OUTPUT);
+            isLocalFile = extras.getBoolean(Crop.Extra.IS_LOCAL_FILE);
         }
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri));
+            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri, isLocalFile));
 
             InputStream is = null;
             try {
@@ -395,8 +398,8 @@ public class CropImageActivity extends MonitoredActivity {
             }
 
             CropUtil.copyExifRotation(
-                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri),
-                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri)
+                    CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri, isLocalFile),
+                    CropUtil.getFromMediaUri(this, getContentResolver(), saveUri, isLocalFile)
             );
 
             setResultUri(saveUri);

@@ -24,6 +24,7 @@ public class Crop {
         String MAX_X = "max_x";
         String MAX_Y = "max_y";
         String ERROR = "error";
+        String IS_LOCAL_FILE = "is_local_file";
     }
 
     private Intent cropIntent;
@@ -34,11 +35,11 @@ public class Crop {
      * @param source Uri for image to crop
      * @param destination Uri for saving the cropped image
      */
-    public static Crop of(Uri source, Uri destination) {
+    public static Crop of(final Uri source, final Uri destination) {
         return new Crop(source, destination);
     }
 
-    private Crop(Uri source, Uri destination) {
+    private Crop(final Uri source, final Uri destination) {
         cropIntent = new Intent();
         cropIntent.setData(source);
         cropIntent.putExtra(MediaStore.EXTRA_OUTPUT, destination);
@@ -47,10 +48,20 @@ public class Crop {
     /**
      * Set fixed aspect ratio for crop area
      *
+     * @param local File from the phone
+     */
+    public Crop withLocalFile(final boolean local) {
+        cropIntent.putExtra(Extra.IS_LOCAL_FILE, local);
+        return this;
+    }
+
+    /**
+     * Set fixed aspect ratio for crop area
+     *
      * @param x Aspect X
      * @param y Aspect Y
      */
-    public Crop withAspect(int x, int y) {
+    public Crop withAspect(final int x, final int y) {
         cropIntent.putExtra(Extra.ASPECT_X, x);
         cropIntent.putExtra(Extra.ASPECT_Y, y);
         return this;
@@ -71,7 +82,7 @@ public class Crop {
      * @param width Max width
      * @param height Max height
      */
-    public Crop withMaxSize(int width, int height) {
+    public Crop withMaxSize(final int width, final int height) {
         cropIntent.putExtra(Extra.MAX_X, width);
         cropIntent.putExtra(Extra.MAX_Y, height);
         return this;
@@ -82,7 +93,7 @@ public class Crop {
      *
      * @param activity Activity to receive result
      */
-    public void start(Activity activity) {
+    public void start(final Activity activity) {
         start(activity, REQUEST_CROP);
     }
 
@@ -92,7 +103,7 @@ public class Crop {
      * @param activity Activity to receive result
      * @param requestCode requestCode for result
      */
-    public void start(Activity activity, int requestCode) {
+    public void start(final Activity activity, final int requestCode) {
         activity.startActivityForResult(getIntent(activity), requestCode);
     }
 
@@ -102,7 +113,7 @@ public class Crop {
      * @param context Context
      * @param fragment Fragment to receive result
      */
-    public void start(Context context, Fragment fragment) {
+    public void start(final Context context, final Fragment fragment) {
         start(context, fragment, REQUEST_CROP);
     }
 
@@ -112,7 +123,7 @@ public class Crop {
 	 * @param context Context
 	 * @param fragment Fragment to receive result
 	 */
-	public void start(Context context, android.support.v4.app.Fragment fragment) {
+	public void start(final Context context, final android.support.v4.app.Fragment fragment) {
 		start(context, fragment, REQUEST_CROP);
 	}
 
@@ -123,7 +134,7 @@ public class Crop {
      * @param fragment Fragment to receive result
      * @param requestCode requestCode for result
      */
-    public void start(Context context, Fragment fragment, int requestCode) {
+    public void start(final Context context, final Fragment fragment, final int requestCode) {
         fragment.startActivityForResult(getIntent(context), requestCode);
     }
 
@@ -134,7 +145,7 @@ public class Crop {
 	 * @param fragment Fragment to receive result
 	 * @param requestCode requestCode for result
 	 */
-	public void start(Context context, android.support.v4.app.Fragment fragment, int requestCode) {
+	public void start(final Context context, final android.support.v4.app.Fragment fragment, final int requestCode) {
 		fragment.startActivityForResult(getIntent(context), requestCode);
 	}
 
@@ -144,7 +155,7 @@ public class Crop {
      * @param context Context
      * @return Intent for CropImageActivity
      */
-    public Intent getIntent(Context context) {
+    public Intent getIntent(final Context context) {
         cropIntent.setClass(context, CropImageActivity.class);
         return cropIntent;
     }
@@ -154,7 +165,7 @@ public class Crop {
      *
      * @param result Output Image URI
      */
-    public static Uri getOutput(Intent result) {
+    public static Uri getOutput(final Intent result) {
         return result.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
     }
 
@@ -164,7 +175,7 @@ public class Crop {
      * @param result Result Intent
      * @return Throwable handled in CropImageActivity
      */
-    public static Throwable getError(Intent result) {
+    public static Throwable getError(final Intent result) {
         return (Throwable) result.getSerializableExtra(Extra.ERROR);
     }
 
@@ -173,7 +184,7 @@ public class Crop {
      *
      * @param activity Activity that will receive result
      */
-    public static void pickImage(Activity activity) {
+    public static void pickImage(final Activity activity) {
         pickImage(activity, REQUEST_PICK);
     }
 
@@ -183,7 +194,7 @@ public class Crop {
      * @param activity Activity that will receive result
      * @param requestCode requestCode for result
      */
-    public static void pickImage(Activity activity, int requestCode) {
+    public static void pickImage(final Activity activity, final int requestCode) {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT).setType("image/*");
         try {
             activity.startActivityForResult(intent, requestCode);

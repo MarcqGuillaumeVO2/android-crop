@@ -45,6 +45,14 @@ public class CropBuilderTest extends BaseTestCase {
         assertThat(intent.getIntExtra("aspect_y", 0)).isEqualTo(10);
     }
 
+    public void testIsLocalFileSetAsExtras() {
+        builder.withLocalFile(true);
+
+        Intent intent = builder.getIntent(activity);
+
+        assertThat(intent.getBooleanExtra("is_locale_file", false)).isEqualTo(true);
+    }
+
     public void testFixedAspectRatioSetAsExtras() {
         builder.asSquare();
 
