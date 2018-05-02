@@ -86,7 +86,7 @@ public class CropUtil {
             return -1;
         }
 
-        if( 0 < cursor.getColumnIndex(MediaStore.Images.ImageColumns.ORIENTATION)) {
+        if( 0 < cursor.getColumnIndex(MediaStore.Images.ImageColumns.ORIENTATION) || cursor.getColumnCount() < 1) {
             return getExifRotation(CropUtil.getFromMediaUri(context, context.getContentResolver(), photoUri, isLocalFile));
         }
 
