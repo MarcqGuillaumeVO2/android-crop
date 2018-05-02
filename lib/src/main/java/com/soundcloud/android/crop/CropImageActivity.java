@@ -121,7 +121,8 @@ public class CropImageActivity extends MonitoredActivity {
 
         sourceUri = intent.getData();
         if (sourceUri != null) {
-            exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri, isLocalFile));
+            //exifRotation = CropUtil.getExifRotation(CropUtil.getFromMediaUri(this, getContentResolver(), sourceUri, isLocalFile));
+            exifRotation = CropUtil.getOrientation(this, sourceUri);
 
             InputStream is = null;
             try {
