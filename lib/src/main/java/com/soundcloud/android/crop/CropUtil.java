@@ -57,7 +57,7 @@ public class CropUtil {
         try {
             ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
             // We only recognize a subset of orientation tag values
-            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
+            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     return 90;
                 case ExifInterface.ORIENTATION_ROTATE_180:
@@ -65,7 +65,7 @@ public class CropUtil {
                 case ExifInterface.ORIENTATION_ROTATE_270:
                     return 270;
                 default:
-                    return ExifInterface.ORIENTATION_UNDEFINED;
+                    return ExifInterface.ORIENTATION_NORMAL;
             }
         } catch (IOException e) {
             Log.e("Error getting Exif data", e);
