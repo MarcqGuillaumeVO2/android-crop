@@ -73,9 +73,13 @@ public class CropUtil {
         }
     }
 
-    public static int getOrientation(Context context, Uri photoUri) {
+    public static int getOrientation(Context context, Uri photoUri, boolean isLocalFile) {
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+
+        if(null == cursor){
+            return getExifRotation(CropUtil.getFromMediaUri(context, context.getContentResolver(), photoUri, isLocalFile));
+        }
 
         if (cursor.getCount() != 1) {
             cursor.close();
