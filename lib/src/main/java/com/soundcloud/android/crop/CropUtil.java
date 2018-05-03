@@ -20,12 +20,12 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.media.ExifInterface;
 import android.text.TextUtils;
 
 import java.io.Closeable;
@@ -34,6 +34,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /*
  * Modified from original in AOSP.
@@ -52,12 +53,14 @@ public class CropUtil {
         }
     }
 
-    public static int getExifRotation(File imageFile) {
-        if (imageFile == null) return 0;
+    public static int getExifRotation(Context context, Uri photoUri) {
+        InputStream in = null;
         try {
-            ExifInterface exif = new ExifInterface(imageFile.getAbsolutePath());
+            in = context.getContentResolver().openInputStream(photoUri);
+            ExifInterface exifInterface = new ExifInterface(in);
+
             // We only recognize a subset of orientation tag values
-            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
+            switch (exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     return 90;
                 case ExifInterface.ORIENTATION_ROTATE_180:
@@ -67,10 +70,18 @@ public class CropUtil {
                 default:
                     return ExifInterface.ORIENTATION_UNDEFINED;
             }
+
         } catch (IOException e) {
-            Log.e("Error getting Exif data", e);
-            return 0;
+            // Handle any errors
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {}
+            }
         }
+
+        return ExifInterface.ORIENTATION_UNDEFINED;
     }
 
     public static int getOrientation(Context context, Uri photoUri, boolean isLocalFile) {
@@ -78,7 +89,7 @@ public class CropUtil {
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
         if(null == cursor){
-            return getExifRotation(CropUtil.getFromMediaUri(context, context.getContentResolver(), photoUri, isLocalFile));
+            return getExifRotation(context, photoUri);
         }
 
         if (cursor.getCount() != 1) {
@@ -87,7 +98,7 @@ public class CropUtil {
         }
 
         if( 0 < cursor.getColumnIndex(MediaStore.Images.ImageColumns.ORIENTATION) || cursor.getColumnCount() < 1) {
-            return getExifRotation(CropUtil.getFromMediaUri(context, context.getContentResolver(), photoUri, isLocalFile));
+            return getExifRotation(context, photoUri);
         }
 
         cursor.moveToFirst();
